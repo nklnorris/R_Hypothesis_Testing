@@ -2,7 +2,7 @@
 
 This is an example of a hypothesis test I conducted in R as part of coursework during my time in the Universsity of Kansas's masters program in Statistics and Data Analytics.
 
-## Description
+### Description
 
 The hypothesis test covers two different questions:
 * Is there a difference in birth rates from two different years.
@@ -16,7 +16,7 @@ The program was created in R Studio using R Markdown and does knit into a HTML f
 * R Studio
 * R Markdown
 
-## Authors
+### Authors
 
 Nickie Norris
 [Linkedin](https://www.linkedin.com/in/nickie-norris-4721b946/)
