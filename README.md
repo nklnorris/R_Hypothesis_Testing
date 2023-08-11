@@ -1,6 +1,6 @@
 # R_Hypothesis_Testing
 
-This is an example of a hypothesis test I conducted in R as part of coursework during my time in the Universsity of Kansaa's masters program in Statistics and Data Analytics.
+This is an example of a hypothesis test I conducted in R as part of coursework during my time in the Universsity of Kansas's masters program in Statistics and Data Analytics.
 
 ## Description
 
