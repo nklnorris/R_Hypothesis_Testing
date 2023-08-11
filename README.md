@@ -19,4 +19,4 @@ The program was created in R Studio using R Markdown and does knit into a HTML f
 ## Authors
 
 Nickie Norris
-[Linkedin}(https://www.linkedin.com/in/nickie-norris-4721b946/)
+[Linkedin](https://www.linkedin.com/in/nickie-norris-4721b946/)
