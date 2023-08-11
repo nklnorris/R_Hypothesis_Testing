@@ -1,0 +1,281 @@
+---
+title: "Analysis Plan for Live Birth Rates in all 50 States and the District of Columbia in 1990 and 1998"
+author: "Nickie Norris"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+if(!require(BSDA)) install.packages("BSDA")
+library(BSDA)
+```
+
+## Hypotheses to be tested
+
+* Null Hypothesis 1: The average birth rate for 1990 is the same as the average birth rate for 1998 for all 50 states and the District of Columbia. 
+* Null Hypothesis 2: The 1990 birth rate for 46 states and the District of Columbia is the same as the birth rate for the four commonwealths (Kentucky, Massachusetts, Pennsylvania, and Virginia). 
+
+## Background/Data Source
+
+The **Birth** dataset from the **BSDA** package was used for this analysis. The data set contains 102 entries showing the birth rates for each state and the District of Columbia for 1990 and 1998. 
+
+## Analysis Methods
+
+### Hypothesis 1
+
+The given birth data set was divided into two new sets, one for 1990 and one for 1998. Both new sets were checked visually for any extreme data points that could skew the data. 
+
+The extreme points, if any, were then removed from the data set and an unskewed 1990 data set was compared an unskewed 1998 data set using summary and the ANOVA test. The two comparisons were done against the year variable.  
+
+### Hypothesis 2
+
+The given birth data set was divided into two new sets, one for states/District of Columbia and one for commonwealths (Kentucky, Massachusetts, Pennsylvania, and Virginia) Both new sets were checked visually for any extreme data points that could skew the data. 
+
+The extreme points, if any, were then remvoed from the data set and an unskewed states data set was compared an unskewed commonwealth data set using summary and the ANOVA test. The two comparisons were done against the type of municipality. 
+
+### Assumptions
+
+All inferences are conducted using $\alpha = 0.05$. No changes have been made to the data except for those noted below.  The data is summarized using the following statistics:
+
+* mean
+* median
+* quantiles
+* minimum
+* maximum
+* standard deviation
+
+## Hypothesis 1
+
+The average birth rate for 1990 is the same as the average birth rate for 1998 for all 50 states and the District of Columbia.  
+
+```{r, echo=FALSE}
+birth <- Birth
+ninety = subset(birth, year == "1990")
+nineeight = subset(birth, year == "1998")
+```
+
+### Evaluating 1990 data set 
+
+#### Print summary and standard deviation for 1990
+
+```{r, echo=FALSE}
+summary(ninety$rate)
+sd(ninety$rate)
+```
+
+#### Graph 1990 and identify any problematic data points
+
+There is one data point noticably higher than the general trend, it is state 9 which is the District of Columbia. Since the birth rate for the District of Columbia is over twice as large as the third quartile amount it is probable that this was a typo or an error.
+
+```{r, echo=FALSE}
+boxplot(ninety$rate, xlab = "State", ylab = "Birth Rate", main = "Birth Rate by State (1990)")
+plot(ninety$rate, xlab = "State", ylab = "Birth Rate", main = "Birth Rate by State (1990)")
+hist(ninety$rate, xlab = "State", ylab = "Birth Rate", main = "Birth Rate by State (1990)")
+```
+
+#### Determine whether any data points need to be excluded
+
+Since the District of Columbia was so far outside of the general trend it has been excluded from the 1990 data set from this point forward.   
+
+#### Print summary and standard deviation for 1990 excluding the District of Columbia
+
+Note the drop in standard deviation. 
+
+```{r, echo=FALSE}
+ninetynew <- ninety [-9,]
+summary(ninetynew$rate)
+sd(ninetynew$rate)
+```
+
+#### Generate a plot for 1990 without the District of Columbia. Do any other data points need to be excluded?
+
+There are two to three data points that are higher than the rest, however since there is a gradient leading up to them and they are not noticably far away from the group they will not be excluded. 
+
+```{r, echo=FALSE}
+boxplot(ninetynew$rate, xlab = "State", ylab = "Birth Rate", main = "Birth Rate by State (1990), Excluding the District of Columbia")
+plot(ninetynew$rate, xlab = "State", ylab = "Birth Rate", main = "Birth Rate by State (1990), Excluding the District of Columbia")
+hist(ninetynew$rate, xlab = "State", ylab = "Birth Rate", main = "Birth Rate by State (1990), Excluding the District of Columbia")
+```
+
+### Evaluating 1998 data set
+
+#### Print summary and standard deviation for 1998
+
+```{r, echo=FALSE}
+summary(nineeight$rate)
+sd(nineeight$rate)
+```
+
+#### Graph 1998 and identify any problematic data points
+
+There is one data point noticably higher than the general trend, it is state 45 which is Utah. Since the birth rate for Utah is 150% higher than the third quartile amount it is possible that this was a typo or an error.
+
+```{r, echo=FALSE}
+boxplot(nineeight$rate, xlab = "State", ylab = "Birth Rate", main = "Birth Rate by State (1998)")
+plot(nineeight$rate, xlab = "State", ylab = "Birth Rate", main = "Birth Rate by State (1998)")
+hist(nineeight$rate, xlab = "State", ylab = "Birth Rate", main = "Birth Rate by State (1998)")
+```
+
+#### Determine whether any data points need to be excluded 
+
+Since Utah is visibly outside of the general trend it has been excluded from the 1998 data set from this point forward. 
+
+#### Print summary and standard deviation for 1998 excluding Utah
+
+```{r, echo=FALSE}
+nineeightnew <- nineeight [-45,]
+summary(nineeightnew$rate)
+sd(nineeightnew$rate)
+```
+
+#### Generate a plot for 1998 excluding Utah 
+
+```{r, echo=FALSE}
+boxplot(nineeightnew$rate, xlab = "State", ylab = "Birth Rate", main = "Birth Rate by State (1998), Excluding Utah")
+plot(nineeightnew$rate, xlab = "State", ylab = "Birth Rate", main = "Birth Rate by State (1998), Excluding Utah")
+hist(nineeightnew$rate, xlab = "State", ylab = "Birth Rate", main = "Birth Rate by State (1998), Excluding Utah") 
+```
+
+### Compare 1990 and 1998
+
+The unskewed 1990 and unskewed 1998 data sets were merged together using rbind and a summary generated with the independent variable as the year. 
+
+```{r, echo=FALSE}
+birth2 <- rbind(ninetynew, nineeightnew)
+summary(lm(rate~year, birth2))
+anova(lm(rate~year, birth2))
+```
+
+#### Generate a graph showing a plot for 1990 birth rates and 1998 birth rates
+
+There is a visible difference between the 1990 birth rates and the 1998 birth rates. 
+
+```{r, echo=FALSE}
+nie <- (ninetynew$rate)
+nienou <- (nineeightnew$rate)
+allab <- c("1990", "1998")
+boxplot(nie, nienou, names=allab, vertical = TRUE,
+        main = "Comparison of Average Birth Rates", ylab = "Birth Rates") 
+```
+
+### Results from testing hypothesis 1
+
+The *p*-value is less than 0.05, meaning the null hypothesis can be rejected. There is a statistically significant difference between birth rates from 1990 and birth rates from 1998. 
+
+## Hypothesis 2
+
+The 1990 birth rate for 46 states and the District of Columbia is the same as the birth rate for the four commonwealths (Kentucky, Massachusetts, Pennsylvania, and Virgnia). 
+
+```{r, echo=FALSE}
+cmwth = subset(ninety, state == "Massachusetts" | state == "Virginia" | state == "Pennsylvania" | state == "Kentucky")
+statedc = subset(ninety, state != "Massachusetts" & state != "Virginia" & state != "Pennsylvania" & state != "Kentucky")
+```
+
+### Evaluating the data set containing the 46 states and the District of Columbia
+
+#### Print summary and standard deviation for states
+
+```{r, echo=FALSE}
+summary(statedc$rate)
+sd(statedc$rate)
+```
+
+#### Graph state birth rates and identify any problematic data points
+
+The District of Columbia is a noticable skewer for this data set, as was seen in hypothesis 1.  
+
+```{r, echo=FALSE}
+boxplot(statedc$rate, xlab = "State", ylab = "Birth Rate", main = "Birth Rate by States (1990)")
+plot(statedc$rate, xlab = "State", ylab = "Birth Rate", main = "Birth Rate by States (1990)")
+hist(statedc$rate, xlab = "State", ylab = "Birth Rate", main = "Birth Rate by States (1990)") 
+```
+
+#### Determine whether any data points need to be excluded 
+
+Since the District of Columbia is visibly outside of the general trend it has been excluded from the states data set from this point forward.
+
+```{r, echo=FALSE}
+statedcnew <- statedc [-9,]
+```
+
+#### Print summary and standard deviation for the states data set excluding the District of Columbia
+
+```{r, echo=FALSE}
+summary(statedcnew$rate)
+sd(statedcnew$rate)
+```
+
+#### Generate a plot for statedc excluding the outliers 
+
+```{r, echo=FALSE}
+boxplot(statedcnew$rate, xlab = "State", ylab = "Birth Rate", main = "Birth Rate by States (1990), Excluding the District of Columbia")
+plot(statedcnew$rate, xlab = "State", ylab = "Birth Rate", main = "Birth Rate by States (1990), Excluding the District of Columbia")
+hist(statedcnew$rate, xlab = "State", ylab = "Birth Rate", main = "Birth Rate by States (1990), Excluding the District of Columbia")  
+```
+
+### Evaluating the data set containing the 4 commonwealths 
+
+#### Print summary and standard deviation for cmwth
+
+```{r, echo=FALSE}
+summary(cmwth$rate)
+sd(cmwth$rate)
+```
+
+#### Graph 1998 and identify any problematic data points
+
+```{r, echo=FALSE}
+boxplot(cmwth$rate, xlab = "State", ylab = "Birth Rate", main = "Birth Rate by Commonwealths (1990)")
+plot(cmwth$rate, xlab = "State", ylab = "Birth Rate", main = "Birth Rate by Commonwealths (1990)")
+hist(cmwth$rate, xlab = "State", ylab = "Birth Rate", main = "Birth Rate by Commonwealths (1990)") 
+```
+
+#### Determine whether any data points need to be excluded 
+
+With an n of 4 it is difficult to determine if any of the data points are outliers, therefore none of the data points will be excluded from the comparison.
+
+### Compare states and commonwealths
+
+Since the year for states and commonwealths is 1990, I changed year to 1 for states and 2 for commonwealths. The unskewed states and the commonwealths data sets were then merged together using rbind and a summary generated with the independent variable as the type (state shows up in the report since type 1 was printed into the year slot for each row containing a state, etc.). 
+
+```{r, echo=FALSE}
+statedc$year <- 1
+cmwth$year <- 2
+birth3 <- rbind(cmwth, statedc)
+summary(lm(rate~year, birth3))
+anova(lm(rate~year, birth3))
+```
+
+#### Generate a graph showing a plot for states v. commonwealths 1990 birth rates
+
+```{r, echo=FALSE}
+statnrate <- (statedcnew$rate)
+cmwthrate <- (cmwth$rate)
+allab <- c("States", "Commonwealths")
+boxplot(statnrate, cmwthrate, names=allab, vertical = TRUE,
+        main = "Comparison of State and Commonweath Birth Rates in 1990", ylab = "Birth Rates") 
+```
+
+### Results from testing hypothesis 2
+
+The *p*-value is more than 0.05, meaning the null hypothesis cannot be rejected. There is no statistically significant difference between state and commonwealth birth rates. 
+
+### Conclusions and Discussion
+
+With both data sets the same approach was taken. Three different plot types were used since there was a chance one may show something that the other one did not. This is similar to the process that was used in Lesson 8. 
+
+#### Hypothesis 1
+
+The null hypothesis was rejected, meaning that there is a statistically significant difference between 1990 and 1998 birth rates. Despite there being a correlation there is no other data to compare it to that explains why birth rates are lowering. 
+
+I would be interested to see if there is a statistically significant drop in specific states when compared to other ones. Such as Virginia's birth rate lowering by 5 when the mean lowering is only 1.5.  
+
+#### Hypothesis 2
+
+Since the null hypothesis could not be rejected it can be concluded that there is no significant difference between states and commonwealths birth rates. 
+
+That being said the analysis would be more accurate and could possibly show a correlation if state and commonwealth birth rates were compared over multiple years. The commonwealth data set needs more data points to be able to draw any reliable conclusions from it. 
+
+```{r session-info}
+sessionInfo()
+```
+
